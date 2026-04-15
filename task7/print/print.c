@@ -1,13 +1,13 @@
 #include "print.h"
 
 #include <fcntl.h>
-#include <stddef.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "../config/config.h"
 #include "../write/write.h"
 
-int print_file(const char *title, size_t title_size, const char *path) {
+int print_file(const char *title, const char *path) {
   char buffer[BUFFER_SIZE];
   int input_fd = open(path, O_RDONLY);
   int has_data = 0;
@@ -17,7 +17,7 @@ int print_file(const char *title, size_t title_size, const char *path) {
     return 0;
   }
 
-  if (!write_all(STDOUT_FILENO, title, title_size)) {
+  if (!write_all(STDOUT_FILENO, title, strlen(title))) {
     close(input_fd);
     return 0;
   }

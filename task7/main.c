@@ -63,11 +63,11 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  if (!print_file(PARENT_TITLE, sizeof(PARENT_TITLE) - 1, PARENT_COPY_PATH)) {
+  if (!print_file(PARENT_TITLE, PARENT_COPY_PATH)) {
     return 1;
   }
 
-  if (!print_file(CHILD_TITLE, sizeof(CHILD_TITLE) - 1, CHILD_COPY_PATH)) {
+  if (!print_file(CHILD_TITLE, CHILD_COPY_PATH)) {
     return 1;
   }
 
