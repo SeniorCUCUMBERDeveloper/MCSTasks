@@ -7,7 +7,7 @@
 
 #include "../readline/readline.h"
 
-int append_value(int **data, size_t *size, size_t *capacity, int value) {
+static int append_value(int **data, size_t *size, size_t *capacity, int value) {
   if (*size == *capacity) {
     int *new_data = NULL;
     size_t new_capacity = 16;

@@ -3,7 +3,18 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-int compare_ints(const void *left, const void *right) {
+struct Range {
+  size_t begin;
+  size_t end;
+};
+
+struct SortTask {
+  int *data;
+  size_t begin;
+  size_t end;
+};
+
+static int compare_ints(const void *left, const void *right) {
   int left_value = *(const int *)left;
   int right_value = *(const int *)right;
 
@@ -18,7 +29,7 @@ int compare_ints(const void *left, const void *right) {
   return 0;
 }
 
-void build_ranges(size_t size, size_t part_count, struct Range *ranges) {
+static void build_ranges(size_t size, size_t part_count, struct Range *ranges) {
   size_t begin = 0;
   size_t index = 0;
   size_t base_size = size / part_count;
@@ -37,7 +48,7 @@ void build_ranges(size_t size, size_t part_count, struct Range *ranges) {
   }
 }
 
-void *sort_chunk(void *arg) {
+static void *sort_chunk(void *arg) {
   struct SortTask *task = arg;
   size_t size = task->end - task->begin;
 
@@ -48,7 +59,7 @@ void *sort_chunk(void *arg) {
   return NULL;
 }
 
-void merge_ranges(int *data, int *buffer, size_t left_begin, size_t middle, size_t right_end) {
+static void merge_ranges(int *data, int *buffer, size_t left_begin, size_t middle, size_t right_end) {
   size_t left = left_begin;
   size_t right = middle;
   size_t dest = left_begin;
