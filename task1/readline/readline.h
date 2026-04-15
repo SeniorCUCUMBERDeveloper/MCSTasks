@@ -1,8 +1,5 @@
-#ifndef TASK1_READLINE_H
-#define TASK1_READLINE_H
+#pragma once
 
 #include <stdio.h>
 
 char *readline(FILE *stream);
-
-#endif
