@@ -1,10 +1,11 @@
 CC = gcc
 TARGET = task7
+SOURCES = main.c write/write.c copy/copy.c print/print.c
 
 all: $(TARGET)
 
-$(TARGET): main.c
-	$(CC) $(CFLAGS) -o $(TARGET) main.c
+$(TARGET): $(SOURCES)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SOURCES)
 
 clean:
 	rm -f $(TARGET)
