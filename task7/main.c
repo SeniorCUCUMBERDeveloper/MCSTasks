@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "config/config.h"
@@ -7,6 +8,8 @@
 
 int main(int argc, char **argv) {
   int input_fd = -1;
+  pid_t child_pid = -1;
+  int child_status = 0;
 
   if (argc != 2) {
     return 1;
@@ -14,6 +17,40 @@ int main(int argc, char **argv) {
 
   input_fd = open(argv[1], O_RDONLY);
   if (input_fd < 0) {
+    return 1;
+  }
+
+  child_pid = fork();
+  if (child_pid < 0) {
+    close(input_fd);
+    return 1;
+  }
+
+  if (child_pid == 0) {
+    if (!copy_to_file(input_fd, CHILD_COPY_PATH)) {
+      close(input_fd);
+      _exit(1);
+    }
+
+    if (close(input_fd) < 0) {
+      _exit(1);
+    }
+
+    _exit(0);
+  }
+
+  if (waitpid(child_pid, &child_status, 0) < 0) {
+    close(input_fd);
+    return 1;
+  }
+
+  if (!WIFEXITED(child_status) || WEXITSTATUS(child_status) != 0) {
+    close(input_fd);
+    return 1;
+  }
+
+  if (lseek(input_fd, 0, SEEK_SET) < 0) {
+    close(input_fd);
     return 1;
   }
 
@@ -27,6 +64,10 @@ int main(int argc, char **argv) {
   }
 
   if (!print_file(PARENT_TITLE, sizeof(PARENT_TITLE) - 1, PARENT_COPY_PATH)) {
+    return 1;
+  }
+
+  if (!print_file(CHILD_TITLE, sizeof(CHILD_TITLE) - 1, CHILD_COPY_PATH)) {
     return 1;
   }
 
