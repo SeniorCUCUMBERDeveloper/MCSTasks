@@ -1,6 +1,6 @@
 CC = gcc
 TARGET = task3
-SOURCES = main.c readline/readline.c lines/lines.c
+SOURCES = main.c readline/readline.c lines/lines.c sort/sort.c print/print.c
 
 all: $(TARGET)
 
