@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define READ_BUFFER_SIZE 256
+
 char *readline(FILE *stream) {
-  static char buffer[256];
+  static char buffer[READ_BUFFER_SIZE];
   char *line = NULL;
   size_t length = 0;
 
