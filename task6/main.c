@@ -1,7 +1,10 @@
+#include <grp.h>
+#include <pwd.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/sysmacros.h>
 #include <sys/types.h>
+#include <time.h>
 
 static void file_type(mode_t mode, char *symbol, const char **name) {
   *symbol = '?';
@@ -57,6 +60,36 @@ static void format_permissions(char symbol, mode_t mode, char permissions[11]) {
   permissions[10] = '\0';
 }
 
+static void print_time(const char *label, time_t value) {
+  char *text = ctime(&value);
+
+  if (text == NULL) {
+    return;
+  }
+
+  printf("%s: %s", label, text);
+}
+
+static const char *user_name(uid_t uid) {
+  struct passwd *entry = getpwuid(uid);
+
+  if (entry == NULL) {
+    return "unknown";
+  }
+
+  return entry->pw_name;
+}
+
+static const char *group_name(gid_t gid) {
+  struct group *entry = getgrgid(gid);
+
+  if (entry == NULL) {
+    return "unknown";
+  }
+
+  return entry->gr_name;
+}
+
 static void print_file_info(const char *path, const struct stat *info) {
   char permissions[11];
   char type_symbol = '?';
@@ -74,6 +107,11 @@ static void print_file_info(const char *path, const struct stat *info) {
   printf("Inode: %llu\n", (unsigned long long)info->st_ino);
   printf("Links: %llu\n", (unsigned long long)info->st_nlink);
   printf("Access: (%04o/%s)\n", info->st_mode & 0777, permissions);
+  printf("Uid: (%u/%s)\n", info->st_uid, user_name(info->st_uid));
+  printf("Gid: (%u/%s)\n", info->st_gid, group_name(info->st_gid));
+  print_time("Access Time", info->st_atime);
+  print_time("Modify Time", info->st_mtime);
+  print_time("Change Time", info->st_ctime);
 }
 
 int main(int argc, char **argv) {
