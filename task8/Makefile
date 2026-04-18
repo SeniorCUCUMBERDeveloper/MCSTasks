@@ -1,6 +1,6 @@
 CC = gcc
 TARGET = task8
-SOURCES = main.c matrix/matrix.c
+SOURCES = main.c matrix/matrix.c multiply/multiply.c
 
 all: $(TARGET)
 
