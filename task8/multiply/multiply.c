@@ -33,6 +33,7 @@ static void restore_default_handler(const struct MultiplyState *state) {
 }
 
 static void print_current_positions(const struct MultiplyState *state) {
+  printf("\n");
   printf("%d %d\n", state->current_positions.first.row + 1, state->current_positions.first.col + 1);
   printf("%d %d\n", state->current_positions.second.row + 1, state->current_positions.second.col + 1);
   printf("%d %d\n", state->current_positions.result.row + 1, state->current_positions.result.col + 1);
