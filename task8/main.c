@@ -57,7 +57,7 @@ static int install_handler(int method) {
   return 1;
 }
 
-static void fill_input_matrices(struct Matrix *first, struct Matrix *second) {
+static void fill_matrices(struct Matrix *first, struct Matrix *second) {
   int row = 0;
   int col = 0;
 
@@ -74,8 +74,8 @@ static void fill_input_matrices(struct Matrix *first, struct Matrix *second) {
   }
 }
 
-static void free_all_matrices(struct Matrix *first, struct Matrix *second,
-                              struct Matrix *result) {
+static void free_matrices(struct Matrix *first, struct Matrix *second,
+                          struct Matrix *result) {
   delete_matrix(first);
   delete_matrix(second);
   delete_matrix(result);
@@ -86,6 +86,7 @@ int main(int argc, char **argv) {
   struct Matrix first = {0};
   struct Matrix second = {0};
   struct Matrix result = {0};
+  struct MultiplyState state = {0};
 
   method = parse_method(argc, argv);
   if (method == 0) {
@@ -103,22 +104,24 @@ int main(int argc, char **argv) {
   }
 
   if (!init_matrix(&second, MATRIX_SIZE)) {
-    free_all_matrices(&first, &second, &result);
+    free_matrices(&first, &second, &result);
     return 1;
   }
 
   if (!init_matrix(&result, MATRIX_SIZE)) {
-    free_all_matrices(&first, &second, &result);
+    free_matrices(&first, &second, &result);
     return 1;
   }
 
-  fill_input_matrices(&first, &second);
+  fill_matrices(&first, &second);
+  state.sigint_received = &sigint_received;
+  state.use_sigaction = method == METHOD_SIGACTION;
 
-  if (!multiply_matrices(&first, &second, &result)) {
-    free_all_matrices(&first, &second, &result);
+  if (!multiply_matrices(&first, &second, &result, &state)) {
+    free_matrices(&first, &second, &result);
     return 1;
   }
 
-  free_all_matrices(&first, &second, &result);
+  free_matrices(&first, &second, &result);
   return 0;
 }
